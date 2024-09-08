@@ -68,12 +68,17 @@ def generate_archive(
         dirs_exist_ok=True,
     )
 
+    toot_base_dir = (
+        output_dir / base_prefix_url.removesuffix("/").rsplit("/", maxsplit=1)[-1]
+    )
+    toot_base_dir.mkdir(exist_ok=True)
+
     for toot in toots:
         if toot.type == "Announce":
             logger.debug("Skipping", toot=toot)
             continue
 
-        output_path = output_dir / toot.object.url.removeprefix(base_prefix_url)
+        output_path = toot_base_dir / toot.object.url.removeprefix(base_prefix_url)
         with output_path.with_suffix(".html").open("w") as fh:
             fh.write(template.render(toot=toot))
 
