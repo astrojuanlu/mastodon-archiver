@@ -1,6 +1,7 @@
 import typing as t
 import json
 from pathlib import Path
+import shutil
 
 from pydantic import BaseModel, AwareDatetime, TypeAdapter
 from structlog import get_logger
@@ -35,8 +36,9 @@ class Toot(BaseModel):
 def generate_archive(
     input_directory=Path("export"),
     template_dir=Path("templates"),
+    static_dir=Path("static"),
     base="https://social.juanlu.space/@astrojuanlu/",
-    output_directory=Path("output"),
+    output_dir=Path("output"),
 ):
     with (input_directory / "outbox.json").open() as fh:
         contents = json.load(fh)
@@ -52,7 +54,12 @@ def generate_archive(
     )
     template = jinja_env.get_template("toot.html.j2")
 
-    output_directory.mkdir(exist_ok=True)
+    output_dir.mkdir(exist_ok=True)
+
+    for static_subdir in ("css", "fonts", "img"):
+        shutil.copytree(
+            static_dir / static_subdir, output_dir / static_subdir, dirs_exist_ok=True
+        )
 
     for toot in toots:
         if toot.type == "Announce":
