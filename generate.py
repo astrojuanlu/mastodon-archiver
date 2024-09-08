@@ -79,7 +79,8 @@ def generate_archive(
             continue
 
         output_path = toot_base_dir / toot.object.url.removeprefix(base_prefix_url)
-        with output_path.open("w") as fh:
+        output_path.mkdir(exist_ok=True)
+        with (output_path / "index.html").open("w") as fh:
             fh.write(template.render(toot=toot))
 
 
