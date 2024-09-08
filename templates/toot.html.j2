@@ -33,6 +33,19 @@
 <div class="status__content emojify"><div class="e-content" lang="en">
 {{ toot.object.content | safe }}
 </div></div>
+{% if toot.object.attachment %}
+<div>
+<div class="media-gallery" style="display: block">
+{% for attachment in toot.object.attachment %}
+{% if attachment.mediaType == "image/jpeg" or attachment.mediaType == "image/png" %}
+<div class="media-gallery__item">
+  <img src="{{ attachment.url }}" alt="{{ attachment.name }}" title="{{ attachment.name }}" width="500px" >
+</div>
+{% endif %}
+{% endfor %}
+</div>
+</div>
+{% endif %}
 <div class="detailed-status__meta">
 <data class="dt-published" value="{{ toot.published }}"></data>
 <a class="detailed-status__datetime u-url u-uid" target="_blank" rel="noopener noreferrer" href="{{ toot.object.url }}"><time class="formatted" datetime="{{ toot.published.strftime('%Y-%m-%dT%H:%M:%S%z') }}" title="{{ toot.published.strftime('%B %-d, %Y at %-I:%M %p') }}">{{ toot.published.strftime('%B %-d, %Y at %-I:%M %p') }}</time>

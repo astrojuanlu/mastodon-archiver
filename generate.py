@@ -37,7 +37,8 @@ def generate_archive(
     input_dir=Path("export"),
     template_dir=Path("templates"),
     static_dir=Path("static"),
-    base="https://social.juanlu.space/@astrojuanlu/",
+    base_prefix_url="https://social.juanlu.space/@astrojuanlu/",
+    base_prefix_media="socialjuanluspace/",
     output_dir=Path("output"),
 ):
     with (input_dir / "outbox.json").open() as fh:
@@ -61,12 +62,18 @@ def generate_archive(
             static_dir / static_subdir, output_dir / static_subdir, dirs_exist_ok=True
         )
 
+    shutil.copytree(
+        input_dir / "media_attachments",
+        output_dir / base_prefix_media / "media_attachments",
+        dirs_exist_ok=True,
+    )
+
     for toot in toots:
         if toot.type == "Announce":
             logger.debug("Skipping", toot=toot)
             continue
 
-        output_path = output_dir / toot.object.url.removeprefix(base)
+        output_path = output_dir / toot.object.url.removeprefix(base_prefix_url)
         with output_path.with_suffix(".html").open("w") as fh:
             fh.write(template.render(toot=toot))
 
