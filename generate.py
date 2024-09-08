@@ -34,13 +34,13 @@ class Toot(BaseModel):
 
 
 def generate_archive(
-    input_directory=Path("export"),
+    input_dir=Path("export"),
     template_dir=Path("templates"),
     static_dir=Path("static"),
     base="https://social.juanlu.space/@astrojuanlu/",
     output_dir=Path("output"),
 ):
-    with (input_directory / "outbox.json").open() as fh:
+    with (input_dir / "outbox.json").open() as fh:
         contents = json.load(fh)
 
     toots_adapter = TypeAdapter(list[Toot])
@@ -66,7 +66,7 @@ def generate_archive(
             logger.debug("Skipping", toot=toot)
             continue
 
-        output_path = output_directory / toot.object.url.removeprefix(base)
+        output_path = output_dir / toot.object.url.removeprefix(base)
         with output_path.with_suffix(".html").open("w") as fh:
             fh.write(template.render(toot=toot))
 
